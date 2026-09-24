@@ -45,6 +45,7 @@ class StoreStudentRequest extends FormRequest
             'birthday' => ['required', 'date'],
             'subjects' => ['required', 'array', 'min:1'],
             'subjects.*' => ['required', 'string', 'max:100'],
+            'photo' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
         ];
     }
 }

@@ -8,7 +8,7 @@
             <h1>Add Student Record</h1>
         </div>
 
-        <form method="POST" action="{{ route('students.store') }}">
+        <form method="POST" action="{{ route('students.store') }}" enctype="multipart/form-data">
             @csrf
 
             <table class="detail">
@@ -74,6 +74,15 @@
                     <th>Birthday</th>
                     <td>
                         <input type="date" name="birthday" value="{{ old('birthday') }}" required>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Photo</th>
+                    <td>
+                        <input type="file" name="photo" accept="image/jpeg,image/png,image/webp">
+                        @error('photo')
+                            <p class="field-error">{{ $message }}</p>
+                        @enderror
                     </td>
                 </tr>
                 <tr>

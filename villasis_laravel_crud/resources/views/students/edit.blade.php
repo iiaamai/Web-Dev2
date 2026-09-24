@@ -8,7 +8,7 @@
             <h1>Edit Student Record</h1>
         </div>
 
-        <form method="POST" action="{{ route('students.update', $student) }}">
+        <form method="POST" action="{{ route('students.update', $student) }}" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -78,6 +78,22 @@
                     <th>Birthday</th>
                     <td>
                         <input type="date" name="birthday" value="{{ old('birthday', $student->birthday->format('Y-m-d')) }}" required>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Photo</th>
+                    <td>
+                        @if ($student->photo_path)
+                            <img
+                                class="form-photo-preview"
+                                src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url($student->photo_path) }}"
+                                alt="Current photo of {{ $student->firstname }} {{ $student->lastname }}"
+                            >
+                        @endif
+                        <input type="file" name="photo" accept="image/jpeg,image/png,image/webp">
+                        @error('photo')
+                            <p class="field-error">{{ $message }}</p>
+                        @enderror
                     </td>
                 </tr>
                 <tr>

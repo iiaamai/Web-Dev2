@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreStudentRequest;
+use App\Http\Requests\UploadStudentPhotoRequest;
 use App\Http\Requests\UpdateStudentRequest;
 use App\Models\Student;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class StudentController extends Controller
@@ -32,7 +34,17 @@ class StudentController extends Controller
                 ]);
         }
 
-        Student::query()->create($request->validated());
+        $data = $request->validated();
+        $photo = $data['photo'] ?? null;
+        unset($data['photo']);
+
+        $student = Student::query()->create($data);
+
+        if ($photo) {
+            $student->update([
+                'photo_path' => $photo->store('students/'.$student->id.'/photos', 'public'),
+            ]);
+        }
 
         return redirect()
             ->route('students.index')
@@ -44,6 +56,26 @@ class StudentController extends Controller
         return view('students.show', compact('student'));
     }
 
+    public function createPhoto(Student $student): View
+    {
+        return view('students.upload', compact('student'));
+    }
+
+    public function storePhoto(UploadStudentPhotoRequest $request, Student $student): RedirectResponse
+    {
+        $path = $request->file('photo')->store('students/'.$student->id.'/photos', 'public');
+
+        if ($student->photo_path) {
+            Storage::disk('public')->delete($student->photo_path);
+        }
+
+        $student->update(['photo_path' => $path]);
+
+        return redirect()
+            ->route('students.show', $student)
+            ->with('success', 'Student photo uploaded successfully.');
+    }
+
     public function edit(Student $student): View
     {
         return view('students.edit', compact('student'));
@@ -51,7 +83,21 @@ class StudentController extends Controller
 
     public function update(UpdateStudentRequest $request, Student $student): RedirectResponse
     {
-        $student->update($request->validated());
+        $data = $request->validated();
+        $photo = $data['photo'] ?? null;
+        unset($data['photo']);
+
+        if ($photo) {
+            $newPhotoPath = $photo->store('students/'.$student->id.'/photos', 'public');
+
+            if ($student->photo_path) {
+                Storage::disk('public')->delete($student->photo_path);
+            }
+
+            $data['photo_path'] = $newPhotoPath;
+        }
+
+        $student->update($data);
 
         return redirect()
             ->route('students.index')
@@ -60,6 +106,10 @@ class StudentController extends Controller
 
     public function destroy(Student $student): RedirectResponse
     {
+        if ($student->photo_path) {
+            Storage::disk('public')->delete($student->photo_path);
+        }
+
         $student->delete();
 
         return redirect()

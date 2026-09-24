@@ -25,6 +25,7 @@ class Student extends Model
         'status',
         'birthday',
         'subjects',
+        'photo_path',
     ];
 
     protected function casts(): array

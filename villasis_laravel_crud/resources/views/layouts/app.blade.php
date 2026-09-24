@@ -191,9 +191,69 @@
             align-items: center;
         }
 
+        .student-detail-layout {
+            display: grid;
+            grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        .student-photo-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: stretch;
+            border: 2px solid var(--color-secondary);
+            border-radius: var(--radius);
+            padding: 12px;
+            text-align: center;
+        }
+
+        .student-photo,
+        .student-photo-placeholder {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+        }
+
+        .student-photo {
+            display: block;
+            object-fit: cover;
+        }
+
+        .student-photo-placeholder {
+            display: grid;
+            place-items: center;
+            padding: 16px;
+            background: #eff6ff;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .form-photo-preview {
+            display: block;
+            width: 120px;
+            height: 120px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
         .inline-delete {
             display: inline;
             margin: 0;
+        }
+
+        @media (max-width: 700px) {
+            .student-detail-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .student-photo-panel {
+                max-width: 280px;
+                margin: 0 auto;
+                width: 100%;
+            }
         }
 
         /* ---------- Detail / form table ---------- */
